@@ -69,6 +69,26 @@ export const ERC20Contract = {
             return error;
         }
     },
+    getSymbol: async () => {
+        try {
+            console.log('walletProvider', walletProvider)
+            const ethersProvider = new BrowserProvider(walletProvider.value)
+            console.log('ethersProvider', ethersProvider)
+            const signer = await ethersProvider.getSigner()
+            console.log('signer', signer)
+            const contract = new ethers.Contract(
+                currentToken,
+                erc20,
+                signer
+            );
+            console.log('contract', contract)
+            const res = await contract.symbol();
+            return res;
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
 
     getTotalSupply: async () => {
         try {

@@ -1,6 +1,7 @@
 <script setup>
-import ERC20Contract from '../contract/ERC20'
+import {ERC20Contract} from '../contract/ERC20'
 import { useWeb3ModalAccount } from '@web3modal/ethers/vue'
+import { ref, watch } from 'vue';
 defineProps({
   msg: {
     type: String,
@@ -8,16 +9,34 @@ defineProps({
   },
 })
 
+
 const { account, connect, disconnect, isConnected } = useWeb3ModalAccount()
-const totalSupply = await ERC20Contract.getTotalSupply();
-const owner = await ERC20Contract.getOwner();
-let balance = await ERC20Contract.getBalance(account);
+let totalSupply = ref(0);
+let name = ref('');
+let symbol = ref('');
+let owner = ref('');
+let balance = ref(0);
 let to = ref('');
 let amount = ref(0);
 async function transer() {
   await ERC20Contract.transfer(to.value, amount.value);
   balance = await ERC20Contract.getBalance(account);
 }
+
+async function updateData() {
+  totalSupply = await ERC20Contract.getTotalSupply();
+  owner = await ERC20Contract.getOwner();
+  balance = await ERC20Contract.getBalance(account);
+  name = await ERC20Contract.getName();
+  symbol = await ERC20Contract.getSymbol();
+  
+}
+
+watch((isConnected) => {
+  if (isConnected) {
+    updateData();
+  }
+});
 
 </script>
 
@@ -30,13 +49,15 @@ async function transer() {
         </div>
 
         <div v-if="isConnected">
-          <h3>Connected Account</h3>
-          <p>{{ account }}</p>
+          
+          <h3>Token Details</h3>
+          <br>
+          <p>Name: {{ name }}</p>
+          <p>Symbol: {{ symbol }}</p>
+          <p>Total Supply: {{ totalSupply }}</p>
+          <p>Owner: {{ owner }}</p>
+
           <p>Balance: {{ balance }}</p>
-          <br>
-          <h3>Claim Tokens (100)</h3> 
-          <br>
-          <button @click="claim()">Claim</button>
           <br>
           <h3>Transfer tokens</h3> 
           <br>
@@ -44,7 +65,6 @@ async function transer() {
           <br>
           <input v-model="amount" placeholder="Amount" />
           <button @click="transer()">Transfer</button>
-          <button @click="disconnect">Disconnect</button>
         </div>
           
  </div>

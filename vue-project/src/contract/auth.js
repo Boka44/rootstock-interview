@@ -54,7 +54,7 @@ const ethersConfig = defaultConfig({
 // 5. Create a Web3Modal instance
 const modal = createWeb3Modal({
   ethersConfig,
-  chains: [mainnet, sepolia, rootstocktestnet],
+  chains: [rootstocktestnet],
   projectId,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
   enableOnramp: true // Optional - false as default
